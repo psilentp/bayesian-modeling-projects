@@ -1,6 +1,6 @@
 # Baysian-modeling-projects
 
-This is home to a miscellaneous of Baysian modeling projects developed using [tensorflow probability](https://www.tensorflow.org/probability). My motivation for developing this library is primary as a learning tool to improve my understanding of tensorflow and baysian inference. The plan is to collect a number of key examples that are publicly available and work them using a common framework and codebase using tensorflow probability. 
+This is home to a set of miscellaneous of Baysian modeling projects developed using [tensorflow probability](https://www.tensorflow.org/probability). My motivation for developing this is primary as a learning tool to improve my understanding of tensorflow and baysian inference. The plan is to collect a number of public domain examples and work them using a common framework and codebase using tensorflow probability. I will do my best to document source material and any changes/modifications.
 
 ## Installation
 
