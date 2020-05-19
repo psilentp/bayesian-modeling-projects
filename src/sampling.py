@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 import arviz as az
+import numpy as np
 
 tfd = tfp.distributions
 tfb = tfp.bijectors
@@ -27,11 +28,11 @@ def _trace_to_arviz(
         sample_stats = {k: v.numpy().T for k, v in sample_stats.items()}
     if prior_predictive is not None and isinstance(prior_predictive, dict):
         prior_predictive = {k: v[np.newaxis] for k, v in prior_predictive.items()}
-    if posterior_predictive is not None and isinstance(posterior_predictive, dict):
-        if isinstance(trace, az.InferenceData) and inplace == True:
-            return trace + az.from_dict(posterior_predictive=posterior_predictive)
-        else:
-            trace = None
+    #if posterior_predictive is not None and isinstance(posterior_predictive, dict):
+    #    if isinstance(trace, az.InferenceData) and inplace == True:
+    #        return trace + az.from_dict(posterior_predictive=posterior_predictive)
+    #    else:
+    #        trace = None
 
     return az.from_dict(
         posterior=trace,
@@ -115,7 +116,7 @@ def run_hmc_chain(
 ):
     """
     Perform Hamiltonian monti carlo sampling from a posterior distribution. Adapted
-    from
+    from Adapted from https://github.com/ksachdeva/rethinking-tensorflow-probability.
     :param init_state:
     :param bijectors:
     :param step_size:
@@ -175,6 +176,22 @@ def sample_posterior(
     num_samples=NUMBER_OF_SAMPLES,
     burnin=NUMBER_OF_BURNIN,
 ):
+    """
+    Generate samples from the posterior of a
+    tensorflow_probability.probability.JointDistributionCoroutine
+    instance. Adapted from https://github.com/ksachdeva/rethinking-tensorflow-probability.
+    :param jdc:
+    :param observed_data:
+    :param params:
+    :param init_state:
+    :param bijectors:
+    :param step_size:
+    :param method:
+    :param num_chains:
+    :param num_samples:
+    :param burnin:
+    :return:
+    """
 
     if init_state is None:
         init_state = list(jdc.sample(num_chains)[:-1])
@@ -207,6 +224,7 @@ def sample_posterior(
 
     stat_names = ["mean_tree_accept"]
     sampler_stats = dict(zip(stat_names, [sample_stats]))
+    posterior_predictive = tf.squeeze(jdc.sample_distributions(value=results)[-1][-1])
 
     transposed_results = []
 
@@ -222,6 +240,12 @@ def sample_posterior(
 
     posterior = dict(zip(params, transposed_results))
 
-    az_trace = _trace_to_arviz(trace=posterior, sample_stats=sampler_stats)
+    transposed_predictive = {"y_hat": tf.transpose(posterior_predictive).numpy().astype(np.float64)}
+    az_trace = _trace_to_arviz(
+        trace=posterior,
+        sample_stats=sampler_stats,
+        posterior_predictive=transposed_predictive,
+        observed_data={"y": np.squeeze(observed_data)},
+    )
 
     return posterior, az_trace
