@@ -53,6 +53,9 @@ def run_nuts_chain(
 ):
     """
     Perform No-U-turn sampling from a posterior distribution.
+    Modified from https://www.tensorflow.org/probability/examples/Modeling_with_JointDistribution
+    and adapted so that the argument list matches the HMc sampler below.
+
     :param init_state:
     :param bijectors:
     :param step_size:
@@ -61,6 +64,7 @@ def run_nuts_chain(
     :param burnin:
     :return:
     """
+
     def trace_fn(_, pkr):
         return (
             pkr.inner_results.inner_results.target_log_prob,
@@ -110,7 +114,8 @@ def run_hmc_chain(
     burnin=NUMBER_OF_BURNIN,
 ):
     """
-    Perform Hamiltonian monti carlo sampling from a posterior distribution.
+    Perform Hamiltonian monti carlo sampling from a posterior distribution. Adapted
+    from
     :param init_state:
     :param bijectors:
     :param step_size:
@@ -120,6 +125,7 @@ def run_hmc_chain(
     :param burnin:
     :return:
     """
+
     def _trace_fn_transitioned(_, pkr):
         return pkr.inner_results.inner_results.log_accept_ratio
 
@@ -129,10 +135,15 @@ def run_hmc_chain(
         step_size=tf.convert_to_tensor(step_size, dtype=tf.float32),
     )
 
+    # applies any bijectors
     inner_kernel = tfp.mcmc.TransformedTransitionKernel(
         inner_kernel=hmc_kernel, bijector=bijectors
     )
-
+    # Apply a simple step size adaptation during burnin
+    # description of this step from: https://www.tensorflow.org/probability/examples/A_Tour_of_TensorFlow_Probability
+    # wrap our HMC TransitionKernel in a SimpleStepSizeAdaptation "meta-kernel",
+    # which will apply some (rather simple heuristic) logic to
+    # adapt the HMC step size during burnin.
     kernel = tfp.mcmc.SimpleStepSizeAdaptation(
         inner_kernel=inner_kernel,
         target_accept_prob=0.8,
@@ -140,6 +151,7 @@ def run_hmc_chain(
         log_accept_prob_getter_fn=lambda pkr: pkr.inner_results.log_accept_ratio,
     )
 
+    # sample the chain.
     results, sampler_stat = tfp.mcmc.sample_chain(
         num_results=num_samples,
         num_burnin_steps=burnin,
