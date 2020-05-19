@@ -84,12 +84,8 @@ def run_nuts_chain(
         trace_fn=trace_fn,
     )
 
-    sampler_stat = sampler_stat[
-        0
-    ]  # for some reason this is different than the HMC sampler
-    sampler_stat = sampler_stat[
-        0
-    ]  # for some reason this is different than the HMC sampler
+    # for some reason this is different than the HMC sampler
+    sampler_stat = sampler_stat[0]
     return chain_state, sampler_stat
 
 
