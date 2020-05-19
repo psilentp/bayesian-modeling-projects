@@ -43,6 +43,57 @@ def _trace_to_arviz(
 
 
 @tf.function(autograph=False, experimental_compile=USE_XLA)
+def run_nuts_chain(
+    init_state,
+    bijectors,
+    step_size,
+    target_log_prob_fn,
+    num_samples=NUMBER_OF_SAMPLES,
+    burnin=NUMBER_OF_BURNIN,
+):
+    def trace_fn(_, pkr):
+        return (
+            pkr.inner_results.inner_results.target_log_prob,
+            pkr.inner_results.inner_results.leapfrogs_taken,
+            pkr.inner_results.inner_results.has_divergence,
+            pkr.inner_results.inner_results.energy,
+            pkr.inner_results.inner_results.log_accept_ratio,
+        )
+
+    kernel = tfp.mcmc.TransformedTransitionKernel(
+        inner_kernel=tfp.mcmc.NoUTurnSampler(target_log_prob_fn, step_size=step_size),
+        bijector=bijectors,
+    )
+
+    hmc = tfp.mcmc.DualAveragingStepSizeAdaptation(
+        inner_kernel=kernel,
+        num_adaptation_steps=burnin,
+        step_size_setter_fn=lambda pkr, new_step_size: pkr._replace(
+            inner_results=pkr.inner_results._replace(step_size=new_step_size)
+        ),
+        step_size_getter_fn=lambda pkr: pkr.inner_results.step_size,
+        log_accept_prob_getter_fn=lambda pkr: pkr.inner_results.log_accept_ratio,
+    )
+
+    # Sampling from the chain.
+    chain_state, sampler_stat = tfp.mcmc.sample_chain(
+        num_results=num_samples,
+        num_burnin_steps=burnin,
+        current_state=init_state,
+        kernel=hmc,
+        trace_fn=trace_fn,
+    )
+
+    sampler_stat = sampler_stat[
+        0
+    ]  # for some reason this is different than the HMC sampler
+    sampler_stat = sampler_stat[
+        0
+    ]  # for some reason this is different than the HMC sampler
+    return chain_state, sampler_stat
+
+
+@tf.function(autograph=False, experimental_compile=USE_XLA)
 def run_hmc_chain(
     init_state,
     bijectors,
@@ -56,8 +107,9 @@ def run_hmc_chain(
         return pkr.inner_results.inner_results.log_accept_ratio
 
     hmc_kernel = tfp.mcmc.HamiltonianMonteCarlo(
-        target_log_prob_fn, num_leapfrog_steps=num_leapfrog_steps,
-        step_size=tf.convert_to_tensor(step_size, dtype=tf.float32)
+        target_log_prob_fn,
+        num_leapfrog_steps=num_leapfrog_steps,
+        step_size=tf.convert_to_tensor(step_size, dtype=tf.float32),
     )
 
     inner_kernel = tfp.mcmc.TransformedTransitionKernel(
@@ -78,7 +130,6 @@ def run_hmc_chain(
         kernel=kernel,
         trace_fn=_trace_fn_transitioned,
     )
-
     return results, sampler_stat
 
 
@@ -89,6 +140,7 @@ def sample_posterior(
     init_state=None,
     bijectors=None,
     step_size=0.1,
+    method="hmc",
     num_chains=NUMBER_OF_CHAINS,
     num_samples=NUMBER_OF_SAMPLES,
     burnin=NUMBER_OF_BURNIN,
@@ -102,14 +154,27 @@ def sample_posterior(
 
     target_log_prob_fn = lambda *x: jdc.log_prob(x + observed_data)
 
-    results, sample_stats = run_hmc_chain(
-        init_state,
-        bijectors,
-        step_size=step_size,
-        target_log_prob_fn=target_log_prob_fn,
-        num_samples=num_samples,
-        burnin=burnin,
-    )
+    if method == "hmc":
+        results, sample_stats = run_hmc_chain(
+            init_state,
+            bijectors,
+            step_size=step_size,
+            target_log_prob_fn=target_log_prob_fn,
+            num_samples=num_samples,
+            burnin=burnin,
+        )
+    elif method == "nuts":
+        results, sample_stats = run_nuts_chain(
+            init_state,
+            bijectors,
+            step_size=step_size,
+            target_log_prob_fn=target_log_prob_fn,
+            num_samples=num_samples,
+            burnin=burnin,
+        )
+    else:
+        raise ValueError("invalid sampling method specified")
+
     stat_names = ["mean_tree_accept"]
     sampler_stats = dict(zip(stat_names, [sample_stats]))
 
