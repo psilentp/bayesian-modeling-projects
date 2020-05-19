@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  notebook:
+    build:
+      context: .
+      dockerfile: notebooks/Dockerfile
+    ports:
+      - 8889:8888
+    volumes:
+      - ${LOCAL_WORKING_DIR}:/home/worker/jupyter
+    environment:
+      JUPYTERLAB_SETTINGS_DIR: notebooks/jupyterlab-settings

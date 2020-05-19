@@ -1,0 +1,20 @@
+[dev-packages]
+flake8 = {version = ">=3.0",license = "New MIT"}
+pytest = {version = ">=5.0",license = "New MIT"}
+pytest-cov = {version = "*",license = "New MIT"}
+jupyter = {version = "*",license = "New BSD"}
+jupyterlab = {version = "*",license = "New BSD"}
+black = {version = "*",license = "New BSD"}
+
+[packages]
+arviz = {version = "*"}
+numpy = {version = "*"}
+pystan = {version = "*"}
+tensorflow = {version = "*"}
+tensorflow_probability = {version = "*"}
+seaborn = {version = "*"}
+scikit-learn = {version = "*"}
+pandas = {version="*"}
+
+[pipenv]
+allow_prereleases = true
