@@ -51,6 +51,16 @@ def run_nuts_chain(
     num_samples=NUMBER_OF_SAMPLES,
     burnin=NUMBER_OF_BURNIN,
 ):
+    """
+    Perform No-U-turn sampling from a posterior distribution.
+    :param init_state:
+    :param bijectors:
+    :param step_size:
+    :param target_log_prob_fn:
+    :param num_samples:
+    :param burnin:
+    :return:
+    """
     def trace_fn(_, pkr):
         return (
             pkr.inner_results.inner_results.target_log_prob,
@@ -99,6 +109,17 @@ def run_hmc_chain(
     num_samples=NUMBER_OF_SAMPLES,
     burnin=NUMBER_OF_BURNIN,
 ):
+    """
+    Perform Hamiltonian monti carlo sampling from a posterior distribution.
+    :param init_state:
+    :param bijectors:
+    :param step_size:
+    :param target_log_prob_fn:
+    :param num_leapfrog_steps:
+    :param num_samples:
+    :param burnin:
+    :return:
+    """
     def _trace_fn_transitioned(_, pkr):
         return pkr.inner_results.inner_results.log_accept_ratio
 
