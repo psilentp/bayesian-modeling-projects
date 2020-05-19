@@ -140,7 +140,8 @@ def run_hmc_chain(
         inner_kernel=hmc_kernel, bijector=bijectors
     )
     # Apply a simple step size adaptation during burnin
-    # description of this step from: https://www.tensorflow.org/probability/examples/A_Tour_of_TensorFlow_Probability
+    # description of this step from:
+    # https://www.tensorflow.org/probability/examples/A_Tour_of_TensorFlow_Probability
     # wrap our HMC TransitionKernel in a SimpleStepSizeAdaptation "meta-kernel",
     # which will apply some (rather simple heuristic) logic to
     # adapt the HMC step size during burnin.
