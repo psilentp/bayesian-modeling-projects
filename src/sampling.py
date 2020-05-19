@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 import arviz as az
+import numpy as np
 
 tfd = tfp.distributions
 tfb = tfp.bijectors
@@ -205,11 +206,11 @@ def sample_posterior(
     else:
         raise ValueError("invalid sampling method specified")
 
-    stat_names = ["mean_tree_accept"]
-    sampler_stats = dict(zip(stat_names, [sample_stats]))
+    stat_names = ["mean_tree_accept", "r-hat"]
+    r_hat = tf.concat(tfp.mcmc.potential_scale_reduction(results), axis=0)
+    sampler_stats = dict(zip(stat_names, [sample_stats, r_hat]))
 
     transposed_results = []
-
     for r in results:
         if len(r.shape) == 2:
             transposed_shape = [1, 0]
