@@ -7,7 +7,7 @@ jupyterlab = {version = "*",license = "New BSD"}
 black = {version = "*",license = "New BSD"}
 
 [packages]
-arviz = {version = "*"}
+arviz = {git = 'https://github.com/arviz-devs/arviz.git', editable = true }
 numpy = {version = "*"}
 pystan = {version = "*"}
 tensorflow = {version = "*"}
