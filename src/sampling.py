@@ -116,7 +116,7 @@ def run_hmc_chain(
 ):
     """
     Perform Hamiltonian monti carlo sampling from a posterior distribution. Adapted
-    from Adapted from https://github.com/ksachdeva/rethinking-tensorflow-probability.
+    from https://github.com/ksachdeva/rethinking-tensorflow-probability.
     :param init_state:
     :param bijectors:
     :param step_size:
