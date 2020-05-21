@@ -7,14 +7,14 @@ jupyterlab = {version = "*",license = "New BSD"}
 black = {version = "*",license = "New BSD"}
 
 [packages]
-arviz = {git = 'https://github.com/arviz-devs/arviz.git', editable = true }
+arviz = {version = "*"}
 numpy = {version = "*"}
-pystan = {version = "*"}
-tensorflow = {version = "*"}
-tensorflow_probability = {version = "*"}
+tensorflow = {version = "==2.1.0"} # apparent dependency conflict in 2.2.0 with pandas
+tensorflow_probability = {version = "==0.9"}
 seaborn = {version = "*"}
 scikit-learn = {version = "*"}
-pandas = {version="*"}
+pandas = {version = "==0.25.*"}
+pymc3 = {version = "*"}
 
 [pipenv]
 allow_prereleases = true
