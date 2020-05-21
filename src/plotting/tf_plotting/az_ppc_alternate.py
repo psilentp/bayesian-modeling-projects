@@ -1,4 +1,8 @@
 """Matplotib Posterior predictive plot."""
+# todo: this breaks with downgrade of arviz from unstable 
+# source version to relese '0.7.0' It should hopfully work with next
+# release. Otherwise it will need to be fixed.
+
 import platform
 import logging
 from matplotlib import animation, get_backend

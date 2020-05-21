@@ -13,7 +13,7 @@ tensorflow = {version = "==2.1.0"} # apparent dependency conflict in 2.2.0 with 
 tensorflow_probability = {version = "==0.9"}
 seaborn = {version = "*"}
 scikit-learn = {version = "*"}
-pandas = {version = "==0.25.*"}
+pandas = {version = "*"}
 pymc3 = {version = "*"}
 
 [pipenv]
