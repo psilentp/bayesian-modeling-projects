@@ -7,7 +7,7 @@ jupyterlab = {version = "*",license = "New BSD"}
 black = {version = "*",license = "New BSD"}
 
 [packages]
-arviz = {version = "*"}
+arviz = {version = ">= 0.8"} # bug in plot density when passing axes.
 numpy = {version = "*"}
 tensorflow = {version = "==2.1.0"} # apparent dependency conflict in 2.2.0 with pandas
 tensorflow_probability = {version = "==0.9"}
