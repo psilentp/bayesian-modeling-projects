@@ -8,6 +8,7 @@ RUN apt-get update \
     sudo \
     locales \
     fonts-liberation \
+    libblas-dev\
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js
