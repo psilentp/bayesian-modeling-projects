@@ -15,7 +15,7 @@ I also created a docker environment that encapsulates (with too many layers) the
 
 ## Usage
 
-A jupyterlab notebook can be activated by running the shell script `runjupyter.sh` in the notebooks directory or using docker.
+A jupyterlab notebook can be activated by running the shell script `runjupyter.sh` in the notebooks directory or using docker:
 
 ```bash
 pipenv run notebooks/runjupyter.sh
