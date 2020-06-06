@@ -1,6 +1,6 @@
 # Baysian-modeling-projects
 
-This is home to a set of miscellaneous of Baysian modeling projects developed using [tensorflow probability](https://www.tensorflow.org/probability) and/or [pymc3](https://docs.pymc.io/). My motivation for developing this is primary as a learning too. The plan is to collect a number of public domain examples and work them using a common framework and codebase using tensorflow probability or pymc3. I will do my best to document source material and any changes/modifications.
+This is home to a set of miscellaneous of Bayesian modeling projects developed using [tensorflow probability](https://www.tensorflow.org/probability) and/or [pymc3](https://docs.pymc.io/). My motivation for developing this is primary as a learning too. The plan is to collect a number of public domain examples and work them using a common framework and codebase using tensorflow probability or pymc3. I will do my best to document source material and any changes/modifications.
 
 ## Installation
 
@@ -24,9 +24,6 @@ pipenv run notebooks/runjupyter.sh
 ```bash
 docker-compose up
 ```
-
-## Contributing
-I have started this project primarily for my own personal development, but collaborators are, of course, welcome.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
